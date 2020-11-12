@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+    backend:
+        image: lumio_thetearoundpicker_backend
+        ports:
+            - "8080:8080"
+    frontend:
+        image: lumio_thetearoundpicker_web
+        ports:
+            - "8081:80"

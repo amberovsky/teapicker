@@ -1,0 +1,306 @@
+swagger: "2.0"
+info:
+  description: "Lumio Research and Development"
+  version: "1.0.0"
+  title: "The Tea Round Picker"
+tags:
+  - name: "employee"
+    description: "Manage Lumio employees / tea drinkers"
+  - name: "team"
+    description: "Manage Lumio teams"
+  - name: "member"
+    description: "Define which employee joins which teams"
+  - name: "pick"
+    description: "Pick the next tea maker"
+schemes:
+  - "http"
+paths:
+  /employee:
+    get:
+      tags:
+        - "employee"
+      summary: "Returns list of all employees"
+      operationId: "getAllEmployees"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Employee"
+        "500":
+          description: "internal server error"
+
+    post:
+      tags:
+        - "employee"
+      summary: "Create a new employee"
+      operationId: "createEmployee"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "name"
+          description: "Employee name"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "successful operation"
+        "500":
+          description: "internal server error"
+
+  /employee/{uuid}:
+    delete:
+      tags:
+        - "employee"
+      summary: "Delete employee by UUID"
+      operationId: "deleteEmployee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "uuid"
+          in: "path"
+          description: "ID of employee to delete"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "such employee not found"
+        "500":
+          description: "internal server error"
+
+
+  /team:
+    get:
+      tags:
+        - "team"
+      summary: "Returns list of all teams"
+      operationId: "getAllTeams"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Team"
+    post:
+      tags:
+        - "team"
+      summary: "Create a new team"
+      operationId: "createTeam"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "name"
+          description: "Team name"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "successful operation"
+        "500":
+          description: "internal server error"
+  /team/{uuid}:
+    delete:
+      tags:
+        - "team"
+      summary: "Delete team by UUID"
+      operationId: "deleteTeam"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "uuid"
+          in: "path"
+          description: "ID of team to delete"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "such team not found"
+        "500":
+          description: "internal server error"
+
+
+  /member:
+    get:
+      tags:
+        - "member"
+      summary: "Returns list of all members of the given team"
+      operationId: "getAllMember"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "team_uuid"
+          description: "Team UUID"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Member"
+        "401":
+          description: "such team not found"
+        "500":
+          description: "internal server error"
+    post:
+      tags:
+        - "member"
+      summary: "Add an existing empoloyee to an existing team"
+      operationId: "createMember"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "association details"
+          schema:
+            type: "object"
+            required:
+              - employee_uuid
+              - team_uuid
+            properties:
+              employee_uuid:
+                type: "string"
+                format: "uuid"
+              team_uuid:
+                type: "string"
+                format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "such employee and/or team not found"
+        "500":
+          description: "internal server error"
+
+  /member/{uuid}:
+    get:
+      tags:
+        - "member"
+      summary: "Get association details by UUID"
+      operationId: "getMember"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "uuid"
+          in: "path"
+          description: "ID of the association"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Member"
+        "500":
+          description: "internal server error"
+    delete:
+      tags:
+        - "member"
+      summary: "Delete association by UUID"
+      operationId: "deleteMember"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "uuid"
+          in: "path"
+          description: "ID of the association"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "such association not found"
+        "500":
+          description: "internal server error"
+
+  /pick/{uuid}:
+    post:
+      tags:
+        - "pick"
+      summary: "Pick the next tea maker"
+      operationId: "pick"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "uuid"
+          in: "path"
+          description: "ID of the team"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "string"
+            format: "uuid"
+        "401":
+          description: "such team not found"
+
+
+definitions:
+  Employee:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+  Team:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+  Member:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        format: "uuid"
+      team_uuid:
+        type: "string"
+        format: "uuid"
+      employee_uuid:
+        type: "string"
+        format: "uuid"
